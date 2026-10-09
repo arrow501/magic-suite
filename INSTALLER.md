@@ -120,9 +120,11 @@ rm -rf "$DEST" "$VENV" ~/.local/bin/mtga-draft-tool \
 
 Post-install: in MTG Arena enable *Options → Account → Detailed Logs
 (Plugin Support)* and restart Arena; the tool reads `Player.log`.
-Also set the MTGA Steam launch options (Steam → MTGA → Properties →
-Launch Options) to `WINEDLLOVERRIDES="winhttp=n,b" %command%` so log
-readers work through Wine's winhttp.
+To auto-start Rhystic Tracker alongside MTGA, set Steam → MTGA →
+Properties → Launch Options to
+`GDK_BACKEND=wayland ~/.local/bin/rhystic-tracker & %command%`
+(append any existing options such as an ultrawide mod's
+`WINEDLLOVERRIDES`).
 
 ## 3. mtga-linux-exporter (`mtg-fetch`)
 

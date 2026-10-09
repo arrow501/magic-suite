@@ -328,11 +328,11 @@ ${C_BOLD}Post-install notes:${C_RESET}
   * MTGA Draft Tool: in MTG Arena enable
         Options -> Account -> Detailed Logs (Plugin Support)
     then restart Arena before drafting.
-  * MTGA Steam launch options (Rhystic Tracker + Draft Tool need winhttp
-    override to read logs; set in Steam -> MTGA -> Properties -> Launch Options):
-        WINEDLLOVERRIDES="winhttp=n,b" %command%
-    Rhystic Tracker itself is launched with GDK_BACKEND=wayland (already in
-    its desktop entry).
+  * MTGA Steam launch options — to auto-start Rhystic Tracker alongside the
+    game (Steam -> MTGA -> Properties -> Launch Options):
+        GDK_BACKEND=wayland ~/.local/bin/rhystic-tracker & %command%
+    (keep any existing options, e.g. an ultrawide mod's WINEDLLOVERRIDES,
+    in front of %command%)
   * mtg-mcp: requires MTGJSON AllPrintings.sqlite (free MTGJSON account) at
         /home/bunny/Kimi/scratch/mtg/AllPrintings.sqlite
   * Rhystic Tracker + Draft Tool attach to Steam/Proton MTGA at:
