@@ -180,19 +180,25 @@ install_mtga_draft_tool() {
     local dest="$CONFIG_DIR/mtga-draft-tool"
     local venv="$CONFIG_DIR/mtga-draft-tool-venv"
 
-    # The fork requires Python >=3.12,<3.15 (pyproject.toml). Find one.
+    # The fork requires Python >=3.12,<3.15 (pyproject.toml). pynput pulls in
+    # evdev, a C extension, so the interpreter must ship its headers (Python.h).
     local py=""
     local cand
     for cand in python3.14 python3.13 python3.12 python3; do
         if command -v "$cand" >/dev/null 2>&1; then
-            if "$cand" -c 'import sys; raise SystemExit(0 if (3,12) <= sys.version_info[:2] < (3,15) else 1)' 2>/dev/null; then
+            if "$cand" -c '
+import sys, sysconfig, os
+ok = (3,12) <= sys.version_info[:2] < (3,15)
+ok = ok and os.path.exists(os.path.join(sysconfig.get_paths()["include"], "Python.h"))
+raise SystemExit(0 if ok else 1)' 2>/dev/null; then
                 py="$cand"; break
             fi
         fi
     done
     if [ -z "$py" ]; then
-        err "no Python >=3.12,<3.15 found (tried python3.14/3.13/3.12/python3)."
-        err "Install one (e.g. 'sudo pacman -S python') and re-run."
+        err "no Python >=3.12,<3.15 with dev headers (Python.h) found."
+        err "Tried python3.14/3.13/3.12/python3. Install one (e.g. 'sudo pacman -S python'"
+        err "or 'uv python install 3.12') and re-run."
         SUMMARY_FAIL+=("mtga-draft-tool (no suitable python)"); return 1
     fi
     info "using interpreter: $py ($($py --version 2>&1))"

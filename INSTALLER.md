@@ -20,9 +20,13 @@ verification and rollback, in case you need to do or debug them manually.
 # Steam/Proton MTGA present
 ls ~/.local/share/Steam/steamapps/common/MTGA
 
-# Python for the draft tool: needs >=3.12,<3.15 and tkinter
+# Python for the draft tool: needs >=3.12,<3.15, tkinter, AND dev headers
+# (pynput's evdev dependency is a C extension compiled at install time)
 python3 -c 'import sys; print(sys.version)'
 python3 -c 'import tkinter'   # if this fails: sudo pacman -S tk
+python3 -c 'import sysconfig, os; print(os.path.join(sysconfig.get_paths()["include"], "Python.h"))'
+# if Python.h is missing for /usr/bin/python3 (some minimal distro splits),
+# use a uv-managed interpreter instead, e.g.: uv python install 3.12
 
 # uv for mtg-mcp
 ~/.local/bin/uv --version
@@ -64,8 +68,10 @@ rm -f ~/.local/bin/rhystic-tracker \
 
 ## 2. MTGA Draft Tool (unrealities fork, v4.23)
 
-Requires Python >=3.12,<3.15 (see `components/mtga-draft-tool/pyproject.toml`).
-Pick the first working interpreter: `python3.14 python3.13 python3.12 python3`.
+Requires Python >=3.12,<3.15 with dev headers (`Python.h` — `evdev` compiles at
+install time) and tkinter (see `components/mtga-draft-tool/pyproject.toml`).
+Pick the first interpreter passing all checks:
+`python3.14 python3.13 python3.12 python3`.
 
 ```bash
 SUITE=/home/bunny/Kimi/projects/magic-suite
