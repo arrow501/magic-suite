@@ -1,6 +1,6 @@
 # Magic Suite
 
-bunny's MTG Arena Linux toolchain, bundled as one distributable directory.
+Arrow's MTG Arena Linux toolchain, bundled as one distributable directory.
 Targets Linux (Arch/Omarchy) with MTG Arena running through Steam/Proton at
 `~/.local/share/Steam/steamapps/common/MTGA`.
 
@@ -61,6 +61,20 @@ The upstream `scratch/rhystic-tracker/LICENSE` had a defective copyright line
 ("Copyright (c) 2026 MIT"). The suite copy (`LICENSES/rhystic-tracker.LICENSE.txt`
 and `components/rhystic-tracker/LICENSE`) corrects this to
 "Copyright (c) 2026 Balthazzahr".
+
+## Credits
+
+Suite glue, installer, and mtg-mcp by [Arrow](https://github.com/arrow501).
+Everything else is other people's code, bundled with thanks:
+
+- **[Balthazzahr](https://github.com/Balthazzahr/Rhystic-Tracker)** — Rhystic Tracker
+- **[bstaple1](https://github.com/bstaple1/MTGA_Draft_17Lands)** — original MTGA Draft Tool;
+  maintained fork by **[unrealities](https://github.com/unrealities/MTGA_Draft_17Lands)**
+- **[Ignacio Pastor](https://github.com/IpastorSan/mtga-linux-exporter)** — mtga-linux-exporter,
+  ported from **[NthPhantom10](https://github.com/NthPhantom10/MTGA-collection-exporter)**'s
+  Windows original
+- Data sources: [MTGJSON](https://mtgjson.com), [17Lands](https://www.17lands.com),
+  [Scryfall](https://scryfall.com)
 
 ## Legal / data-usage notes
 
