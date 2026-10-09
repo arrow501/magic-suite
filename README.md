@@ -19,13 +19,13 @@ See `INSTALLER.md` for the same procedure written as exact steps for an AI agent
 
 | Component | Purpose | Upstream | License | Maintained? |
 |---|---|---|---|---|
-| **Rhystic Tracker** | Tauri GUI: real-time MTGA match/deck tracking, stats history | [Balthazzahr/Rhystic-Tracker](https://github.com/Balthazzahr/Rhystic-Tracker) | MIT © 2026 Balthazzahr | Yes — bunny's own fork/app |
+| **Rhystic Tracker** | Tauri GUI: real-time MTGA match/deck tracking, stats history | [Balthazzahr/Rhystic-Tracker](https://github.com/Balthazzahr/Rhystic-Tracker) | MIT © 2026 Balthazzahr | Yes — upstream by Balthazzahr, this is a fork |
 | **MTGA Draft Tool** | Draft overlay using 17Lands card ratings (v4.23) | [unrealities/MTGA_Draft_17Lands](https://github.com/unrealities/MTGA_Draft_17Lands) | MIT © 2022 bstaple1 & 2024 unrealities | Yes — the unrealities fork is the actively maintained line; the original bstaple1 repo is abandoned |
 | **mtga-linux-exporter** | `mtg-fetch` CLI: exports your Arena collection by scanning the running Proton process's memory; enriches via Scryfall | [IpastorSan/mtga-linux-exporter](https://github.com/IpastorSan/mtga-linux-exporter) | MIT © 2026 Ignacio Pastor | Yes |
-| **mtg-mcp** | MCP server for AI deckbuilding: oracle text, legality, deck analysis over a local MTGJSON sqlite | bunny's own (`tools/mtg-mcp`) | MIT © 2026 Balthazzahr | Yes — bunny's own |
+| **mtg-mcp** | MCP server for AI deckbuilding: oracle text, legality, deck analysis over a local MTGJSON sqlite | Arrow (`tools/mtg-mcp`) | MIT © 2026 Arrow | Yes — Arrow's own |
 
 Per-component license texts live in `LICENSES/`. Suite glue (installer,
-launchers, mtg-mcp) is MIT © 2026 Balthazzahr (see `LICENSE`).
+launchers, mtg-mcp) is MIT © 2026 Arrow (see `LICENSE`).
 
 ## Layout
 

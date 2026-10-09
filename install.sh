@@ -2,7 +2,7 @@
 # ==============================================================================
 # Magic Suite — installer for bunny's MTGA Linux toolchain
 # Components: rhystic-tracker, mtga-draft-tool, mtga-linux-exporter, mtg-mcp
-# MIT (c) 2026 Balthazzahr
+# MIT (c) 2026 Arrow
 # ==============================================================================
 set -euo pipefail
 
