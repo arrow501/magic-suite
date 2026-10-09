@@ -15,7 +15,7 @@ import sqlite3
 
 from mcp.server.fastmcp import FastMCP
 
-DB_PATH = "/home/bunny/Kimi/scratch/mtg/AllPrintings.sqlite"
+DB_PATH = "/home/bunny/.local/share/magic-suite/AllPrintings.sqlite"
 
 mcp = FastMCP("mtga-deckbuilder")
 
@@ -236,7 +236,7 @@ def search_cards(
     return "\n".join(lines)
 
 
-COLLECTION_PATH = "/home/bunny/Kimi/scratch/mtg/collection.json"
+COLLECTION_PATH = "/home/bunny/.local/share/magic-suite/collection.json"
 
 _collection_cache: dict = {"mtime": None, "by_name": {}}
 
@@ -260,6 +260,25 @@ def _collection() -> dict[str, int]:
         except (json.JSONDecodeError, OSError):
             _collection_cache.update(mtime=mtime, by_name={})
     return _collection_cache["by_name"]
+
+
+@mcp.tool()
+def update_card_db() -> str:
+    """Refresh the local MTGJSON card database (downloads AllPrintings.sqlite,
+    ~700MB). Runs update-db.sh, which a human can also run directly from a
+    shell. Takes a minute or two."""
+    import subprocess
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                          "update-db.sh")
+    if not os.path.exists(script):
+        return f"error: {script} not found"
+    try:
+        proc = subprocess.run(["bash", script], capture_output=True, text=True,
+                              timeout=600)
+    except subprocess.TimeoutExpired:
+        return "error: update timed out after 10 minutes"
+    out = (proc.stdout + proc.stderr).strip()
+    return out if proc.returncode == 0 else f"FAILED (exit {proc.returncode}):\n{out}"
 
 
 @mcp.tool()

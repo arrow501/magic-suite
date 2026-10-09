@@ -48,7 +48,9 @@ INSTALLER.md            step-by-step agent instructions
 - **MTGA Draft Tool**: Python >=3.12,<3.15 with tkinter (Fedora: `dnf install python3-tkinter`; Arch: `pacman -S tk`);
   Arena's *Options → Account → Detailed Logs (Plugin Support)* enabled.
 - **mtg-mcp**: `uv`; MTGJSON `AllPrintings.sqlite` (free account at
-  https://mtgjson.com) at `/home/bunny/Kimi/scratch/mtg/AllPrintings.sqlite`.
+  https://mtgjson.com) at `/home/bunny/.local/share/magic-suite/AllPrintings.sqlite`.
+  Refresh it anytime with `update-db.sh` (bundled next to `server.py`) or the
+  MCP tool `update_card_db` — no systemd timer needed.
 - **Rhystic Tracker**: ships as a prebuilt binary, no build deps needed; its
   desktop entry launches with `GDK_BACKEND=wayland`. To auto-start it whenever
   MTGA launches, set Steam → MTGA → Properties → Launch Options to:

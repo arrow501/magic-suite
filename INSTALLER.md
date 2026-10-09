@@ -33,7 +33,7 @@ python3 -c 'import sysconfig, os; print(os.path.join(sysconfig.get_paths()["incl
 
 # MTGJSON sqlite for mtg-mcp (free account at https://mtgjson.com required
 # to download AllPrintings.sqlite — do NOT attempt to fetch it without one)
-ls /home/bunny/Kimi/scratch/mtg/AllPrintings.sqlite
+ls /home/bunny/.local/share/magic-suite/AllPrintings.sqlite
 ```
 
 XDG target dirs (created by the installer if missing):
@@ -174,14 +174,15 @@ echo 'kernel.yama.ptrace_scope=0' | sudo tee /etc/sysctl.d/60-mtg-fetch.conf
 SUITE=/home/bunny/Kimi/projects/magic-suite
 DEST=~/.config/magic-suite/mtg-mcp
 mkdir -p "$DEST"
-cp "$SUITE/components/mtg-mcp/server.py" "$SUITE/components/mtg-mcp/run.sh" "$DEST/"
+cp "$SUITE/components/mtg-mcp/server.py" "$SUITE/components/mtg-mcp/run.sh" \
+   "$SUITE/components/mtg-mcp/update-db.sh" "$DEST/"
 chmod +x "$DEST/run.sh"
 ```
 
 Verify:
 ```bash
 test -x ~/.config/magic-suite/mtg-mcp/run.sh && echo OK
-ls /home/bunny/Kimi/scratch/mtg/AllPrintings.sqlite   # prerequisite data file
+ls /home/bunny/.local/share/magic-suite/AllPrintings.sqlite   # prerequisite data file
 ```
 
 Register with MCP clients, command = `~/.config/magic-suite/mtg-mcp/run.sh`:
@@ -193,7 +194,7 @@ Register with MCP clients, command = `~/.config/magic-suite/mtg-mcp/run.sh`:
 
 `run.sh` does `uv run --quiet --with 'mcp<2' python server.py`; the server opens
 the MTGJSON sqlite read-only at the path hardcoded in `server.py`
-(`/home/bunny/Kimi/scratch/mtg/AllPrintings.sqlite`).
+(`/home/bunny/.local/share/magic-suite/AllPrintings.sqlite`).
 
 Rollback:
 ```bash

@@ -279,7 +279,7 @@ install_mtg_mcp() {
     local comp="$COMPONENTS_DIR/mtg-mcp"
     local dest="$CONFIG_DIR/mtg-mcp"
     mkdir -p "$dest"
-    cp -f "$comp/server.py" "$comp/run.sh" "$dest/"
+    cp -f "$comp/server.py" "$comp/run.sh" "$comp/update-db.sh" "$dest/"
     chmod +x "$dest/run.sh"
     if [ -f "$dest/server.py" ] && [ -x "$dest/run.sh" ]; then
         ok "installed to $dest"
@@ -300,7 +300,7 @@ install_mtg_mcp() {
     { "mcp": { "mtg": { "type": "stdio", "command": "$dest/run.sh" } } }
 
   Prerequisite: MTGJSON AllPrintings.sqlite (free account at https://mtgjson.com)
-  expected at: /home/bunny/Kimi/scratch/mtg/AllPrintings.sqlite
+  expected at: /home/bunny/.local/share/magic-suite/AllPrintings.sqlite
 EOF
 }
 
@@ -339,7 +339,7 @@ ${C_BOLD}Post-install notes:${C_RESET}
     (keep any existing options, e.g. an ultrawide mod's WINEDLLOVERRIDES,
     in front of %command%)
   * mtg-mcp: requires MTGJSON AllPrintings.sqlite (free MTGJSON account) at
-        /home/bunny/Kimi/scratch/mtg/AllPrintings.sqlite
+        /home/bunny/.local/share/magic-suite/AllPrintings.sqlite
   * Rhystic Tracker + Draft Tool attach to Steam/Proton MTGA at:
         ~/.local/share/Steam/steamapps/common/MTGA
 EOF
