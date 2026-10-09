@@ -1,7 +1,7 @@
 # Magic Suite
 
 Arrow's MTG Arena Linux toolchain, bundled as one distributable directory.
-Targets Linux (Arch/Omarchy) with MTG Arena running through Steam/Proton at
+Targets any FHS-compliant Linux (tested on Fedora) with MTG Arena running through Steam/Proton at
 `~/.local/share/Steam/steamapps/common/MTGA`.
 
 ## Quick start
@@ -45,7 +45,7 @@ INSTALLER.md            step-by-step agent instructions
 
 - **mtga-linux-exporter**: MTGA running via Proton; relaxed ptrace
   (`sudo sysctl kernel.yama.ptrace_scope=0`); Collection tab opened once in-game.
-- **MTGA Draft Tool**: Python >=3.12,<3.15 with tkinter (Arch: `pacman -S tk`);
+- **MTGA Draft Tool**: Python >=3.12,<3.15 with tkinter (Fedora: `dnf install python3-tkinter`; Arch: `pacman -S tk`);
   Arena's *Options → Account → Detailed Logs (Plugin Support)* enabled.
 - **mtg-mcp**: `uv`; MTGJSON `AllPrintings.sqlite` (free account at
   https://mtgjson.com) at `/home/bunny/Kimi/scratch/mtg/AllPrintings.sqlite`.

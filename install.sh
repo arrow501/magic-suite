@@ -202,7 +202,7 @@ raise SystemExit(0 if ok else 1)' 2>/dev/null; then
     fi
     info "using interpreter: $py ($($py --version 2>&1))"
     if ! "$py" -c 'import tkinter' 2>/dev/null; then
-        warn "tkinter not importable for $py — the GUI needs it (Arch: 'sudo pacman -S tk')."
+        warn "tkinter not importable for $py — the GUI needs it (Fedora: 'sudo dnf install python3-tkinter', Arch: 'pacman -S tk')."
     fi
 
     info "copying source to $dest"

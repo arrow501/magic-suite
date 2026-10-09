@@ -1,6 +1,6 @@
 # INSTALLER.md — Magic Suite, step-by-step for an AI agent
 
-Exact procedure to install the Magic Suite on bunny's Arch/Omarchy Linux
+Exact procedure to install the Magic Suite on any FHS-compliant Linux (tested on Fedora)
 machine. Run everything as the unprivileged user; only the ptrace sysctl
 uses sudo. Suite root assumed: `/home/bunny/Kimi/projects/magic-suite`.
 

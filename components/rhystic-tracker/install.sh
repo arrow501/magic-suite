@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Rhystic Tracker — Linux & Arch / Omarchy Desktop Installer
+# Rhystic Tracker — Linux Desktop Installer
 # ==============================================================================
 set -e
 
