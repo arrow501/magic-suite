@@ -114,6 +114,7 @@ if [ "$DO_UNINSTALL" -eq 1 ]; then
           "$BIN_DIR/rhystic-tracker" \
           "$DESKTOP_DIR/mtga-draft-tool.desktop" \
           "$DESKTOP_DIR/rhystic-tracker.desktop" \
+          "$ICON_DIR/mtga-draft-tool.png" \
           "$ICON_DIR/rhystic-tracker.png"
     ok "removed binaries / launchers / desktop entries"
     if [ -d "$CONFIG_DIR" ]; then
@@ -222,12 +223,15 @@ exec "$venv/bin/python" "$dest/main.py" "\$@"
 EOF
     chmod +x "$BIN_DIR/mtga-draft-tool"
 
+    cp -f "$comp/icons/17lands.png" "$ICON_DIR/mtga-draft-tool.png"
+
     cat > "$DESKTOP_DIR/mtga-draft-tool.desktop" <<EOF
 [Desktop Entry]
 Name=MTGA Draft Tool
 GenericName=MTG Arena Draft Assistant
 Comment=Draft helper for MTG Arena using 17Lands data
 Exec=$BIN_DIR/mtga-draft-tool
+Icon=mtga-draft-tool
 Terminal=false
 Type=Application
 Categories=Game;Utility;
@@ -237,7 +241,7 @@ EOF
     # verify: venv exists, deps importable, launcher executable
     if [ -x "$venv/bin/python" ] \
         && "$venv/bin/python" -c 'import numpy, PIL, pydantic, requests, ttkbootstrap' 2>/dev/null \
-        && [ -x "$BIN_DIR/mtga-draft-tool" ]; then
+        && [ -x "$BIN_DIR/mtga-draft-tool" ] && [ -f "$ICON_DIR/mtga-draft-tool.png" ]; then
         ok "verified: venv deps import, launcher at $BIN_DIR/mtga-draft-tool"
         SUMMARY_OK+=("mtga-draft-tool")
     else

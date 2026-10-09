@@ -103,10 +103,14 @@ Name=MTGA Draft Tool
 GenericName=MTG Arena Draft Assistant
 Comment=Draft helper for MTG Arena using 17Lands data
 Exec=$HOME/.local/bin/mtga-draft-tool   # expand $HOME to the absolute path
+Icon=mtga-draft-tool
 Terminal=false
 Type=Application
 Categories=Game;Utility;
 Keywords=mtg;magic;arena;draft;17lands;
+```
+The icon is `components/mtga-draft-tool/icons/17lands.png`, copied to
+`~/.local/share/icons/hicolor/512x512/apps/mtga-draft-tool.png`.
 ```
 
 Verify:
