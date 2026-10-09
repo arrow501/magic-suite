@@ -181,9 +181,12 @@ install_mtga_draft_tool() {
 
     # The fork requires Python >=3.12,<3.15 (pyproject.toml). pynput pulls in
     # evdev, a C extension, so the interpreter must ship its headers (Python.h).
+    # Prefer the system python3 first: uv/pyz standalone builds ship a Tk
+    # without fontconfig, which breaks UI font rendering (falls back to X core
+    # fonts).
     local py=""
     local cand
-    for cand in python3.14 python3.13 python3.12 python3; do
+    for cand in python3 python3.14 python3.13 python3.12; do
         if command -v "$cand" >/dev/null 2>&1; then
             if "$cand" -c '
 import sys, sysconfig, os
@@ -196,7 +199,7 @@ raise SystemExit(0 if ok else 1)' 2>/dev/null; then
     done
     if [ -z "$py" ]; then
         err "no Python >=3.12,<3.15 with dev headers (Python.h) found."
-        err "Tried python3.14/3.13/3.12/python3. Install one (e.g. 'sudo pacman -S python'"
+        err "Tried python3, python3.14/3.13/3.12. Install one with dev headers (Fedora: 'sudo dnf install python3-devel'"
         err "or 'uv python install 3.12') and re-run."
         SUMMARY_FAIL+=("mtga-draft-tool (no suitable python)"); return 1
     fi

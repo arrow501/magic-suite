@@ -70,8 +70,13 @@ rm -f ~/.local/bin/rhystic-tracker \
 
 Requires Python >=3.12,<3.15 with dev headers (`Python.h` — `evdev` compiles at
 install time) and tkinter (see `components/mtga-draft-tool/pyproject.toml`).
-Pick the first interpreter passing all checks:
-`python3.14 python3.13 python3.12 python3`.
+Pick the first interpreter passing all checks, in order
+`python3 python3.14 python3.13 python3.12` — **prefer the system python3**:
+standalone/uv Python builds ship a Tk without fontconfig, which breaks UI
+font rendering (falls back to X core fonts). If the app looks like Windows 95,
+the venv was built against a standalone build; rebuild it against the system
+interpreter. The app hardcodes the "Ubuntu" font family on Linux — install it
+(`~/.local/share/fonts`) or any missing-font fallback will look wrong.
 
 ```bash
 SUITE=/home/bunny/Kimi/projects/magic-suite
