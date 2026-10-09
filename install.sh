@@ -34,9 +34,6 @@ warn()  { echo "${C_YELLOW}  !!${C_RESET} $*" >&2; }
 err()   { echo "${C_RED}  xx${C_RESET} $*" >&2; }
 step()  { echo; echo "${C_BOLD}--- $* ---${C_RESET}"; }
 
-cleanup() { :; }   # no temp state to roll back; individual steps are idempotent
-trap cleanup EXIT
-
 usage() {
     cat <<EOF
 Usage: ./install.sh [options] [component ...]
@@ -60,6 +57,7 @@ while [ $# -gt 0 ]; do
         --list)         DO_LIST=1 ;;
         --uninstall)    DO_UNINSTALL=1 ;;
         -h|--help)      usage; exit 0 ;;
+        --*)            err "unknown option: $1"; usage >&2; exit 2 ;;
         *)              SELECTED+=("$1") ;;
     esac
     shift

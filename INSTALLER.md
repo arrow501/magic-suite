@@ -79,6 +79,7 @@ DEST=~/.config/magic-suite/mtga-draft-tool
 VENV=~/.config/magic-suite/mtga-draft-tool-venv
 PY=python3   # must satisfy >=3.12,<3.15
 
+rm -rf "$DEST" "$VENV"   # idempotent reinstall: drop stale files first
 mkdir -p ~/.config/magic-suite "$DEST"
 (cd "$SUITE/components/mtga-draft-tool" && tar cf - .) | (cd "$DEST" && tar xf -)
 "$PY" -m venv "$VENV"
@@ -99,11 +100,13 @@ Desktop entry `~/.local/share/applications/mtga-draft-tool.desktop`:
 ```
 [Desktop Entry]
 Name=MTGA Draft Tool
+GenericName=MTG Arena Draft Assistant
 Comment=Draft helper for MTG Arena using 17Lands data
 Exec=$HOME/.local/bin/mtga-draft-tool   # expand $HOME to the absolute path
 Terminal=false
 Type=Application
 Categories=Game;Utility;
+Keywords=mtg;magic;arena;draft;17lands;
 ```
 
 Verify:
@@ -123,8 +126,8 @@ Post-install: in MTG Arena enable *Options → Account → Detailed Logs
 To auto-start Rhystic Tracker alongside MTGA, set Steam → MTGA →
 Properties → Launch Options to
 `GDK_BACKEND=wayland ~/.local/bin/rhystic-tracker & %command%`
-(append any existing options such as an ultrawide mod's
-`WINEDLLOVERRIDES`).
+(keep any existing options, such as an ultrawide mod's
+`WINEDLLOVERRIDES`, in front of `%command%`).
 
 ## 3. mtga-linux-exporter (`mtg-fetch`)
 

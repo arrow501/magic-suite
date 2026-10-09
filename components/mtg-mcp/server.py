@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
-"""MTGA deckbuilding MCP for Kimi — batch oracle text, legality, deck analysis.
+"""MTGA suite MCP for Kimi — card data, collection, and match tracking.
 
-Backed by MTGJSON AllPrintings.sqlite (read-only). Tools are batch-first:
-pass lists, get back everything in one call.
+Data sources (all read-only):
+- MTGJSON AllPrintings.sqlite: oracle text, legality, pool/deck search
+- MTGA collection export (collection.json): ownership, deck craft cost
+- Rhystic Tracker db: match history, deck stats
+Tools are batch-first: pass lists, get back everything in one call.
 """
+import contextlib
 import json
+import os
 import re
 import sqlite3
 
@@ -16,9 +21,11 @@ mcp = FastMCP("mtga-deckbuilder")
 
 
 def db():
+    # contextlib.closing: sqlite3's own context manager commits but never
+    # closes — in a long-lived server that leaks an fd per tool call
     conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
-    return conn
+    return contextlib.closing(conn)
 
 
 def _resolve_name(conn, name: str) -> str | None:
@@ -46,7 +53,7 @@ def cards_fulltext(names: list[str]) -> str:
     """Batch: full oracle text and stats for cards by name. Names are resolved
     fuzzily (exact -> case-insensitive -> substring); resolved names are shown.
     Returns the newest Standard-legal printing when possible, else newest overall.
-    Output per card, two lines:
+    Output per card, one or two lines:
       Name | {cost} | type | rarity setcode | std/legal or --
       rules text (blank for vanilla)
     Unknown names: 'Name ?? not found'."""
@@ -199,19 +206,34 @@ def search_cards(
                                   max_mana_value)
     if standard_only:
         where.append("l.standard = 'Legal'")
-    sql = f"""SELECT c.name, c.manaCost, c.type, c.text, c.rarity, MIN(c.setCode) AS setCode
-              FROM cards c LEFT JOIN cardLegalities l ON c.uuid = l.uuid
+    # No GROUP BY here: bare columns under GROUP BY pick fields from arbitrary
+    # printings of the same card. Fetch ranked printings and dedupe in Python,
+    # same preference order as cards_fulltext.
+    sql = f"""SELECT c.name, c.manaCost, c.type, c.text, c.rarity, c.setCode
+              FROM cards c
+              LEFT JOIN cardLegalities l ON c.uuid = l.uuid
+              LEFT JOIN sets s ON c.setCode = s.code
               WHERE {' AND '.join(where)}
-              GROUP BY c.name
-              ORDER BY c.name LIMIT ?"""
-    args.append(limit)
+              ORDER BY c.name,
+                       (l.standard = 'Legal') DESC,
+                       (s.type IN ('core', 'expansion')) DESC,
+                       c.originalReleaseDate DESC"""
 
     with db() as conn:
         conn.create_function("regexp", 2, _regexp)
         rows = conn.execute(sql, args).fetchall()
-    return "\n".join(
-        f'{r["name"]} {r["manaCost"] or ""} {r["type"]} [{r["rarity"]} {r["setCode"]}] :: {r["text"] or ""}'
-        .replace("  ", " ").rstrip(" :") for r in rows)
+    seen: set[str] = set()
+    lines = []
+    for r in rows:
+        if r["name"] in seen:
+            continue
+        seen.add(r["name"])
+        lines.append(
+            f'{r["name"]} {r["manaCost"] or ""} {r["type"]} [{r["rarity"]} {r["setCode"]}] :: {r["text"] or ""}'
+            .replace("  ", " ").rstrip(" :"))
+        if len(lines) >= limit:
+            break
+    return "\n".join(lines)
 
 
 COLLECTION_PATH = "/home/bunny/Kimi/scratch/mtg/collection.json"
@@ -222,14 +244,14 @@ _collection_cache: dict = {"mtime": None, "by_name": {}}
 def _collection() -> dict[str, int]:
     """Owned card counts summed across printings, keyed by canonical name.
     Reloads when the collection file changes; empty dict if absent."""
-    import os
     try:
         mtime = os.path.getmtime(COLLECTION_PATH)
     except OSError:
         return {}
     if _collection_cache["mtime"] != mtime:
         try:
-            data = json.load(open(COLLECTION_PATH))
+            with open(COLLECTION_PATH) as f:
+                data = json.load(f)
             by_name: dict[str, int] = {}
             for c in data.get("cards", []):
                 if c.get("name"):
@@ -265,7 +287,7 @@ def collection_status() -> str:
 @mcp.tool()
 def owned(names: list[str]) -> str:
     """Batch: ownership check against the exported collection.
-    Output: one line per card, 'N/4 Name' (owned/max-playable) or 'not owned Name'."""
+    Output: one line per card, 'N/4 Name' (owned; 4 is the nominal playset cap) or 'not owned Name'."""
     coll = _collection()
     lines = []
     with db() as conn:
@@ -344,7 +366,7 @@ def parse_decklist(decklist: str) -> tuple[list[tuple[int, str]], list[tuple[int
 def deck_check(decklist: str, format: str = "standard") -> str:
     """Analyze an Arena-style decklist ('4 Card Name (SET) 123' lines, optional
     'Deck'/'Sideboard' headers). Names resolved fuzzily. Output sections:
-      counts: maindeck N, sideboard N, unique N
+      counts: maindeck N, sideboard N, unique N (maindeck count excludes unresolved cards)
       unknown: comma list (or 'none')
       illegal(<format>): comma list (or 'none')
       missing: cards to craft, qty needed (from exported collection, if present)
@@ -394,10 +416,17 @@ def deck_check(decklist: str, format: str = "standard") -> str:
             qty_main = sum(q for q, n in main if n == orig)
             if qty_main:
                 total += qty_main
-                mv = sum(int(x) if x.isdigit() else (0 if x in "XYZ" else 1)
-                         for x in re.findall(r"\{([^}]*)\}", mana or ""))
+
+                def _mv(sym: str) -> int:
+                    # handles hybrid/phyrexian: {2/W} -> 2, {W/U}, {G/P} -> 1
+                    head = sym.split("/")[0]
+                    if head.isdigit():
+                        return int(head)
+                    return 0 if head in "XYZ" else 1
+
+                mv = sum(_mv(x) for x in re.findall(r"\{([^}]*)\}", mana or ""))
                 curve[mv] = curve.get(mv, 0) + qty_main
-                for p in re.findall(r"\{([WUBRG])\}", mana or ""):
+                for p in re.findall(r"\{([WUBRG])(?:/[WUBRGP])?\}", mana or ""):
                     pips[p] = pips.get(p, 0) + qty_main
                 rarities[rare] = rarities.get(rare, 0) + qty_main
 
@@ -422,7 +451,7 @@ _ALIVE = "m.id NOT IN (SELECT match_id FROM deleted_matches)"
 def rhystic():
     conn = sqlite3.connect(f"file:{RHYSTIC_DB}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
-    return conn
+    return contextlib.closing(conn)
 
 
 def _card_names(conn, grp_ids: set[int]) -> dict[int, str]:
@@ -575,7 +604,7 @@ def game_details(match_id: str | None = None) -> str:
             elif ev.startswith(("destroy:", "sacrifice:", "bounce:")):
                 verb, _, target = ev.partition(":")
                 txt = f'{verb} {grp}'
-                if target and int(target) != e["grp_id"]:
+                if target and target.isdigit() and int(target) != e["grp_id"]:
                     txt += f' -> {_card_name(names, int(target))}'
             else:
                 txt = f"{ev} {grp}"

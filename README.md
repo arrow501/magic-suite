@@ -53,7 +53,7 @@ INSTALLER.md            step-by-step agent instructions
   desktop entry launches with `GDK_BACKEND=wayland`. To auto-start it whenever
   MTGA launches, set Steam → MTGA → Properties → Launch Options to:
   `GDK_BACKEND=wayland ~/.local/bin/rhystic-tracker & %command%`
-  (append any existing options, e.g. an ultrawide mod's `WINEDLLOVERRIDES`).
+  (keep any existing options, e.g. an ultrawide mod's `WINEDLLOVERRIDES`, in front of `%command%`).
 
 ## License fix note
 
