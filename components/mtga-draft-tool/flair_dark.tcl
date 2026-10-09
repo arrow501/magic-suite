@@ -9,12 +9,12 @@ if {[lsearch [ttk::style theme names] flair_dark] == -1} {
         set bg          "#222226"  ;# Main Background
         set fg          "#F8F8F2"  ;# Main Text (warm off-white)
         set fieldbg     "#28282C"  ;# Input/Table Background
-        set raised      "#343437"  ;# Raised surfaces / hover
+        set raised      "#38383C"  ;# Raised surfaces / hover
         set selectbg    "#D56199"  ;# Accent (muted pink-magenta)
         set selectfg    "#F8F8F2"  ;# Text on accent
         set disabledbg  "#28282C"  ;# Disabled Background
         set disabledfg  "#9B948E"  ;# Muted Text (desaturated brown-gray)
-        set bordercol   "#343437"  ;# Standard border color
+        set bordercol   "#38383C"  ;# Standard border color
 
         # --- 2. FONTS ---
         font create FlairDarkTitleFont -family "Ubuntu" -size 11 -weight bold
@@ -165,7 +165,7 @@ option add *Listbox.foreground "#F8F8F2"
 option add *Listbox.selectBackground "#D56199"
 option add *Listbox.selectForeground "#F8F8F2"
 option add *Canvas.background "#222226"
-option add *highlightBackground "#343437"
+option add *highlightBackground "#38383C"
 option add *highlightColor "#D56199"
 
 # --- 6. ACTIVATE THE THEME ---
