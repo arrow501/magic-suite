@@ -49,7 +49,11 @@ INSTALLER.md            step-by-step agent instructions
   Arena's *Options → Account → Detailed Logs (Plugin Support)* enabled.
 - **mtg-mcp**: `uv`; MTGJSON `AllPrintings.sqlite` (free account at
   https://mtgjson.com) at `/home/bunny/Kimi/scratch/mtg/AllPrintings.sqlite`.
-- **Rhystic Tracker**: ships as a prebuilt binary, no build deps needed.
+- **MTGA Steam launch options** (Steam → MTGA → Properties → Launch Options),
+  needed so trackers can read the log through Wine's winhttp:
+  `WINEDLLOVERRIDES="winhttp=n,b" %command%`
+- **Rhystic Tracker**: ships as a prebuilt binary, no build deps needed; its
+  desktop entry launches with `GDK_BACKEND=wayland`.
 
 ## License fix note
 

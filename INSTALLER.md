@@ -120,6 +120,9 @@ rm -rf "$DEST" "$VENV" ~/.local/bin/mtga-draft-tool \
 
 Post-install: in MTG Arena enable *Options → Account → Detailed Logs
 (Plugin Support)* and restart Arena; the tool reads `Player.log`.
+Also set the MTGA Steam launch options (Steam → MTGA → Properties →
+Launch Options) to `WINEDLLOVERRIDES="winhttp=n,b" %command%` so log
+readers work through Wine's winhttp.
 
 ## 3. mtga-linux-exporter (`mtg-fetch`)
 
